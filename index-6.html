@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>qanda.lol - Discover Amazing Events & Digital Tickets</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .hero-bg {
+      background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+    
+    .blur-bg {
+      backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .ticket-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+    }
+    
+    .glow {
+      box-shadow: 0 0 20px rgba(255, 87, 34, 0.3);
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(255, 87, 34, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 87, 34, 0);
+      }
+    }
+    
+    .float {
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    .logo {
+      width: 70px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* font-weight: 900; */
+      /* font-size: 28px; */
+      color: white;
+      /* background: #FF5722; */
+      border-radius: 12px;
+      transform: rotate(-5deg);
+    }
+    
+    .event-card {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .event-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .category-filter {
+      transition: all 0.3s ease;
+    }
+    
+    .category-filter.active {
+      background: rgba(255, 87, 34, 0.2);
+      color: #FF5722;
+      border-color: #FF5722;
+    }
+
+    /* Mobile Menu */
+    .mobile-menu {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .mobile-menu.open {
+      transform: translateX(0);
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      .hero-bg {
+        background-attachment: scroll;
+      }
+      
+      .mobile-tap {
+        min-height: 44px;
+        min-width: 44px;
+      }
+    }
+
+    /* Category scroll for mobile */
+    .category-scroll {
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    
+    .category-scroll::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</head>
+<body class="hero-bg text-white min-h-screen">
+  <!-- Navigation -->
+  <nav class="blur-bg py-4 px-6 lg:px-12 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center space-x-3">
+      <!-- <div class="logo">Q</div> -->
+      <img class="logo" src="logo.png" />
+      <h1 class="text-2xl font-bold">qanda.lol</h1>
+    </div>
+    
+    <!-- Desktop Navigation -->
+    <div class="hidden md:flex space-x-8">
+      <a href="#" class="hover:text-[#FF5722] transition font-medium">Discover</a>
+      <a href="#" class="hover:text-[#FF5722] transition font-medium">Organize</a>
+      <a href="#" class="hover:text-[#FF5722] transition font-medium">Pricing</a>
+      <a href="#" class="hover:text-[#FF5722] transition font-medium">Support</a>
+    </div>
+    
+    <div class="flex items-center space-x-4">
+      <!-- Mobile Menu Button -->
+      <button id="mobile-menu-button" class="md:hidden mobile-tap p-2 rounded-lg hover:bg-white/10">
+        <i class="fas fa-bars text-lg"></i>
+      </button>
+      
+      <!-- Desktop Auth Buttons -->
+      <div class="hidden md:flex items-center space-x-4">
+        <button class="px-4 py-2 rounded-lg hover:bg-white/10 transition font-medium">Sign In</button>
+        <button class="px-6 py-2 bg-[#FF5722] hover:bg-[#E64A19] rounded-lg font-semibold transition glow">
+          Create Event
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="mobile-menu fixed inset-0 z-40 bg-black/95 backdrop-blur-lg md:hidden">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-8">
+        <div class="flex items-center space-x-3">
+        <img class="logo" src="logo.png" />
+          <!-- <div class="logo">Q</div> -->
+          <h1 class="text-xl font-bold">qanda.lol</h1>
+        </div>
+        <button id="close-menu" class="mobile-tap p-2 rounded-lg hover:bg-white/10">
+          <i class="fas fa-times text-lg"></i>
+        </button>
+      </div>
+      
+      <div class="space-y-6">
+        <a href="#" class="block py-3 text-lg font-medium border-b border-white/10">Discover Events</a>
+        <a href="#" class="block py-3 text-lg font-medium border-b border-white/10">Create Event</a>
+        <a href="#" class="block py-3 text-lg font-medium border-b border-white/10">Pricing</a>
+        <a href="#" class="block py-3 text-lg font-medium border-b border-white/10">Support</a>
+        
+        <div class="pt-6 space-y-4">
+          <button class="w-full py-3 bg-[#FF5722] hover:bg-[#E64A19] rounded-xl font-semibold transition">
+            Sign In
+          </button>
+          <button class="w-full py-3 border border-white/20 hover:bg-white/10 rounded-xl font-semibold transition">
+            Create Account
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 py-12 md:py-20 lg:py-32">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        <!-- Hero Content -->
+        <div class="text-center lg:text-left">
+          <div class="inline-flex items-center space-x-2 bg-white/10 rounded-full px-4 py-2 mb-6">
+            <span class="w-2 h-2 bg-[#FF5722] rounded-full"></span>
+            <span class="text-sm">The future of event ticketing is here</span>
+          </div>
+          
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-6">
+            Your Ticket to 
+            <span class="bg-gradient-to-r from-[#FF5722] to-[#FF8A65] bg-clip-text text-transparent">Unforgettable</span> 
+            Experiences
+          </h1>
+          
+          <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl">
+            Discover amazing events, book tickets instantly, and create memories that last a lifetime. All in one seamless platform.
+          </p>
+          
+          <div class="flex flex-col sm:flex-row gap-4 mb-8">
+            <button class="px-6 py-4 bg-[#FF5722] hover:bg-[#E64A19] rounded-xl font-bold text-lg transition glow pulse">
+              <i class="fas fa-ticket-alt mr-2"></i>Explore Events
+            </button>
+            <button class="px-6 py-4 border border-white/20 hover:bg-white/10 rounded-xl font-semibold text-lg transition">
+              <i class="fas fa-calendar-plus mr-2"></i>Create Event
+            </button>
+          </div>
+          
+          <div class="flex items-center justify-center lg:justify-start space-x-6 md:space-x-8 text-gray-400">
+            <div class="text-center">
+              <div class="text-xl md:text-2xl font-bold text-white">50K+</div>
+              <div class="text-sm">Events Created</div>
+            </div>
+            <div class="text-center">
+              <div class="text-xl md:text-2xl font-bold text-white">2M+</div>
+              <div class="text-sm">Tickets Sold</div>
+            </div>
+            <div class="text-center">
+              <div class="text-xl md:text-2xl font-bold text-white">98%</div>
+              <div class="text-sm">Happy Users</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Hero Visual -->
+        <div class="relative mt-8 lg:mt-0">
+          <div class="ticket-card rounded-2xl lg:rounded-3xl p-6 lg:p-8 float">
+            <div class="bg-gradient-to-br from-[#FF5722] to-[#FF8A65] rounded-xl lg:rounded-2xl p-4 lg:p-6 text-white">
+              <div class="flex justify-between items-start mb-4 lg:mb-6">
+                <div>
+                  <h3 class="font-bold text-lg lg:text-xl">Summer Music Festival</h3>
+                  <p class="text-white/80 text-sm lg:text-base">Aug 12-14, 2023 • Central Park</p>
+                </div>
+                <span class="bg-white/20 px-2 lg:px-3 py-1 rounded-full text-sm font-semibold">$89</span>
+              </div>
+              
+              <div class="bg-white/10 rounded-lg lg:rounded-xl p-3 lg:p-4 mb-4">
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-white/80 text-sm">General Admission</span>
+                  <span class="font-bold">2x</span>
+                </div>
+                <div class="w-full bg-white/20 rounded-full h-2">
+                  <div class="bg-white h-2 rounded-full" style="width: 70%"></div>
+                </div>
+                <p class="text-white/60 text-xs mt-2">70% sold out</p>
+              </div>
+              
+              <button class="w-full py-3 bg-white text-[#FF5722] rounded-xl font-bold hover:bg-gray-100 transition">
+                Get Tickets
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Events -->
+  <section class="py-12 md:py-20 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-8 md:mb-16">
+        <h2 class="text-3xl md:text-4xl lg:text-5xl font-black mb-4">Trending Events</h2>
+        <p class="text-lg text-gray-300 max-w-2xl mx-auto">Discover the hottest events happening near you</p>
+      </div>
+      
+      <!-- Category Filters -->
+      <div class="flex overflow-x-auto category-scroll space-x-3 md:flex-wrap md:justify-center md:gap-4 mb-8 md:mb-12 pb-2">
+        <button class="category-filter active flex-shrink-0 px-4 py-2 rounded-xl font-medium transition border border-[#FF5722]">
+          All Events
+        </button>
+        <button class="category-filter flex-shrink-0 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl font-medium transition border border-white/20">
+          Music
+        </button>
+        <button class="category-filter flex-shrink-0 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl font-medium transition border border-white/20">
+          Sports
+        </button>
+        <button class="category-filter flex-shrink-0 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl font-medium transition border border-white/20">
+          Arts
+        </button>
+        <button class="category-filter flex-shrink-0 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl font-medium transition border border-white/20">
+          Food & Drink
+        </button>
+      </div>
+      
+      <!-- Events Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Event Card 1 -->
+        <div class="ticket-card rounded-2xl overflow-hidden event-card">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" 
+                 alt="Music Festival" class="w-full h-48 object-cover">
+            <div class="absolute top-4 left-4 bg-[#FF5722] text-white px-3 py-1 rounded-full text-sm font-semibold">
+              Music
+            </div>
+          </div>
+          <div class="p-4 lg:p-6">
+            <h3 class="font-bold text-lg lg:text-xl mb-2">Summer Music Festival 2023</h3>
+            <p class="text-gray-400 text-sm mb-4">The biggest music festival featuring top artists across multiple genres</p>
+            <div class="flex justify-between items-center mb-4">
+              <div class="flex items-center text-gray-400 text-sm">
+                <i class="fas fa-calendar-alt mr-2"></i>
+                <span>Aug 12-14</span>
+              </div>
+              <div class="flex items-center text-gray-400 text-sm">
+                <i class="fas fa-map-marker-alt mr-2"></i>
+                <span>Central Park</span>
+              </div>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-xl lg:text-2xl font-bold text-[#FF5722]">$89</span>
+              <button class="px-3 lg:px-4 py-2 bg-[#FF5722] hover:bg-[#E64A19] rounded-lg font-medium transition">
+                Get Tickets
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Event Card 2 -->
+        <div class="ticket-card rounded-2xl overflow-hidden event-card">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" 
+                 alt="Comedy Show" class="w-full h-48 object-cover">
+            <div class="absolute top-4 left-4 bg-[#2196F3] text-white px-3 py-1 rounded-full text-sm font-semibold">
+              Comedy
+            </div>
+          </div>
+          <div class="p-4 lg:p-6">
+            <h3 class="font-bold text-lg lg:text-xl mb-2">Comedy Night Live</h3>
+            <p class="text-gray-400 text-sm mb-4">An evening of laughter with top comedians from Netflix and Comedy Central</p>
+            <div class="flex justify-between items-center mb-4">
+              <div class="flex items-center text-gray-400 text-sm">
+                <i class="fas fa-calendar-alt mr-2"></i>
+                <span>Aug 18</span>
+              </div>
+              <div class="flex items-center text-gray-400 text-sm">
+                <i class="fas fa-map-marker-alt mr-2"></i>
+                <span>Downtown Club</span>
+              </div>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-xl lg:text-2xl font-bold text-[#FF5722]">$35</span>
+              <button class="px-3 lg:px-4 py-2 bg-[#FF5722] hover:bg-[#E64A19] rounded-lg font-medium transition">
+                Get Tickets
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Event Card 3 -->
+        <div class="ticket-card rounded-2xl overflow-hidden event-card">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" 
+                 alt="Tech Conference" class="w-full h-48 object-cover">
+            <div class="absolute top-4 left-4 bg-[#4CAF50] text-white px-3 py-1 rounded-full text-sm font-semibold">
+              Conference
+            </div>
+          </div>
+          <div class="p-4 lg:p-6">
+            <h3 class="font-bold text-lg lg:text-xl mb-2">Tech Conference 2023</h3>
+            <p class="text-gray-400 text-sm mb-4">The premier technology conference featuring industry leaders and innovators</p>
+            <div class="flex justify-between items-center mb-4">
+              <div class="flex items-center text-gray-400 text-sm">
+                <i class="fas fa-calendar-alt mr-2"></i>
+                <span>Sep 5-7</span>
+              </div>
+              <div class="flex items-center text-gray-400 text-sm">
+                <i class="fas fa-map-marker-alt mr-2"></i>
+                <span>Convention Center</span>
+              </div>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-xl lg:text-2xl font-bold text-[#FF5722]">$199</span>
+              <button class="px-3 lg:px-4 py-2 bg-[#FF5722] hover:bg-[#E64A19] rounded-lg font-medium transition">
+                Get Tickets
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center mt-8 md:mt-12">
+        <button class="px-6 py-3 border border-white/20 hover:bg-white/10 rounded-xl font-semibold transition">
+          View All Events
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="py-12 md:py-20 px-6 bg-black/20">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-8 md:mb-16">
+        <h2 class="text-3xl md:text-4xl lg:text-5xl font-black mb-4">How It Works</h2>
+        <p class="text-lg text-gray-300 max-w-2xl mx-auto">Getting your tickets has never been easier</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="text-center">
+          <div class="w-16 h-16 md:w-20 md:h-20 bg-[#FF5722] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
+            <i class="fas fa-search text-white text-xl md:text-2xl"></i>
+          </div>
+          <h3 class="text-xl md:text-2xl font-bold mb-4">1. Discover Events</h3>
+          <p class="text-gray-400 text-sm md:text-base">Browse thousands of events happening near you or explore virtual experiences</p>
+        </div>
+        
+        <div class="text-center">
+          <div class="w-16 h-16 md:w-20 md:h-20 bg-[#FF5722] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
+            <i class="fas fa-ticket-alt text-white text-xl md:text-2xl"></i>
+          </div>
+          <h3 class="text-xl md:text-2xl font-bold mb-4">2. Book Tickets</h3>
+          <p class="text-gray-400 text-sm md:text-base">Secure your spot with our seamless checkout and instant digital tickets</p>
+        </div>
+        
+        <div class="text-center">
+          <div class="w-16 h-16 md:w-20 md:h-20 bg-[#FF5722] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
+            <i class="fas fa-mobile-alt text-white text-xl md:text-2xl"></i>
+          </div>
+          <h3 class="text-xl md:text-2xl font-bold mb-4">3. Enjoy Event</h3>
+          <p class="text-gray-400 text-sm md:text-base">Present your digital ticket at the venue and create unforgettable memories</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-12 md:py-20 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="ticket-card rounded-2xl lg:rounded-3xl p-8 lg:p-12">
+        <h2 class="text-3xl md:text-4xl lg:text-5xl font-black mb-6">Ready to Create Your Event?</h2>
+        <p class="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
+          Join thousands of organizers who trust qanda.lol for their ticketing needs
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <button class="px-6 py-4 bg-[#FF5722] hover:bg-[#E64A19] rounded-xl font-bold text-lg transition glow">
+            Start Creating Events
+          </button>
+          <button class="px-6 py-4 border border-white/20 hover:bg-white/10 rounded-xl font-semibold text-lg transition">
+            Learn More
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/10 py-8 md:py-12 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <div class="flex items-center space-x-3 mb-4">
+            <!-- <div class="logo">Q</div> -->
+            <img class="logo" src="logo.png" />
+            <h3 class="text-xl font-bold">qanda.lol</h3>
+          </div>
+          <p class="text-gray-400 mb-4 text-sm md:text-base">Your ultimate e-ticket platform for unforgettable experiences.</p>
+          <div class="flex space-x-4">
+            <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#FF5722] transition">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#FF5722] transition">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#FF5722] transition">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#FF5722] transition">
+              <i class="fab fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="font-bold mb-4">For Attendees</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="#" class="hover:text-[#FF5722] transition">Browse Events</a></li>
+            <li><a href="#" class="hover:text-[#FF5722] transition">My Tickets</a></li>
+            <li><a href="#" class="hover:text-[#FF5722] transition">Gift Cards</a></li>
+            <li><a href="#" class="hover:text-[#FF5722] transition">Help Center</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="font-bold mb-4">For Organizers</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="#" class="hover:text-[#FF5722] transition">Create Event</a></li>
+            <li><a href="#" class="hover:text-[#FF5722] transition">Pricing</a></li>
+            <li><a href="#" class="hover:text-[#FF5722] transition">Resources</a></li>
+            <li><a href="#" class="hover:text-[#FF5722] transition">Success Stories</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="font-bold mb-4">Company</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="#" class="hover:text-[#FF5722] transition">About Us</a></li>
+            <li><a href="#" class="hover:text-[#FF5722] transition">Careers</a></li>
+            <li><a href="#" class="hover:text-[#FF5722] transition">Contact</a></li>
+            <li><a href="#" class="hover:text-[#FF5722] transition">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-white/10 pt-8 text-center text-gray-400 text-sm">
+        <p>&copy; 2023 qanda.lol. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile Menu Functionality
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const closeMenuButton = document.getElementById('close-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+
+    closeMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      document.body.style.overflow = 'auto';
+    });
+
+    // Close menu when clicking on links
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        document.body.style.overflow = 'auto';
+      });
+    });
+
+    // Category filter functionality
+    document.querySelectorAll('.category-filter').forEach(button => {
+      button.addEventListener('click', function() {
+        document.querySelectorAll('.category-filter').forEach(btn => {
+          btn.classList.remove('active');
+          btn.classList.remove('border-[#FF5722]');
+          btn.classList.add('border-white/20');
+        });
+        this.classList.add('active');
+        this.classList.add('border-[#FF5722]');
+        this.classList.remove('border-white/20');
+      });
+    });
+    
+    // Event card interactions
+    document.querySelectorAll('.event-card').forEach(card => {
+      card.addEventListener('click', function() {
+        // In a real app, this would navigate to event details
+        alert('Navigating to event details...');
+      });
+    });
+    
+    // CTA buttons
+    document.querySelectorAll('button').forEach(button => {
+      if (button.textContent.includes('Explore Events')) {
+        button.addEventListener('click', function() {
+          window.location.href = 'events.html';
+        });
+      }
+      
+      if (button.textContent.includes('Create Event') || button.textContent.includes('Start Creating')) {
+        button.addEventListener('click', function() {
+          window.location.href = 'create-event.html';
+        });
+      }
+    });
+  </script>
+</body>
+</html>
